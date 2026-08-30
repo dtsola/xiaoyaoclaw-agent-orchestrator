@@ -26,7 +26,13 @@ import os
 import sys
 
 DEFAULT_PATHS = [
+    # 原生 OpenClaw
     os.path.expanduser("~/.openclaw/openclaw.json"),
+    # 小遥Claw 桌面版（Windows / macOS）
+    os.path.join(os.environ.get("APPDATA", ""), "xiaoyaoclaw-desktop",
+                 "runtime", "openclaw", "state", "openclaw.json"),
+    os.path.expanduser("~/Library/Application Support/xiaoyaoclaw-desktop/"
+                       "runtime/openclaw/state/openclaw.json"),
 ]
 
 

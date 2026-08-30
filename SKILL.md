@@ -109,9 +109,12 @@ while 有未完成任务:
 
 ## 配置读取（直接读 openclaw.json，不探测）
 
-- 定位：`OPENCLAW_CONFIG_PATH` 环境变量 → 默认路径 `~/.openclaw/openclaw.json`
+- 定位优先级：
+  1. `OPENCLAW_CONFIG_PATH` 环境变量（若设置）
+  2. 常见路径自动检测：`~/.openclaw/openclaw.json`（原生 OpenClaw）/ 小遥Claw 桌面版（Windows `%APPDATA%\xiaoyaoclaw-desktop\runtime\openclaw\state\openclaw.json`、macOS `~/Library/Application Support/xiaoyaoclaw-desktop/runtime/openclaw/state/openclaw.json`）
+  3. 都找不到 → **询问用户配置文件在哪**（或让用户用 `--config` 指定）
 - 读取：`agents.list`（agent 名单）/ `tools.agentToAgent.allow`（白名单）/ `tools.sessions.visibility`
-- 确定性检测可用 `scripts/check_config.py`（零 token）
+- 确定性检测可用 `scripts/check_config.py`（零 token，支持 `--config PATH`）
 
 ## 指令模板（分发时发给对方 agent）
 
