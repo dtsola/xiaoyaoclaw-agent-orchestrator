@@ -1,0 +1,158 @@
+---
+name: xiaoyaoclaw-agent-orchestrator
+description: >
+  OpenClaw multi-agent daily collaboration orchestrator: split a task into
+  subtasks, dispatch to resident agents via sessions_send, track progress via
+  sessions_list/sessions_history, aggregate results with source attribution,
+  and retry failures (default max 3). Reads openclaw.json for agents.list and
+  agentToAgent.allow (bidirectional whitelist); user-editable agent-roster;
+  three-tier trigger (explicit dispatch / suggest+ask for fuzzy big tasks /
+  silent otherwise). Use when user asks to orchestrate/coordinate multiple
+  agents, dispatch parallel work, delegate to a named agent, or aggregate
+  results from several agents (orchestrate/parallel/delegate/让 XX 做/编排/并行/
+  分给/汇总). 中文：OpenClaw 多 Agent 日常协作编排器——任务拆解、跨 agent
+  分发（强制 sessions_send）、进度追踪、结果聚合、失败重试（默认最多 3 次）。
+  三档触发：用户点名或含编排动词直接执行；模糊大任务建议并行并询问用户；
+  其余情况保持沉默。直接读 openclaw.json（agents.list + agentToAgent.allow
+  双向白名单）获取 agent 名单与授权，agent-roster 用户可编辑。适用于多 agent
+  家庭协作、并行调研、批量巡检、发布前多视角审查、团队日报汇总等场景。
+  与 xiaoyaoclaw-workspace-initializer（目录规范）、xiaoyaoclaw-memory-distill
+  （记忆蒸馏）、xiaoyaoclaw-task-progress-tracker（任务进度）、
+  xiaoyaoclaw-kb-retriever（知识检索）、xiaoyaoclaw-workspace-auditor（工作区体检）、
+  xiaoyaoclaw-web-clipper（网页剪藏）组成七件套；本技能为「协作层」，架于六件套之上。
+---
+
+# OpenClaw Agent Orchestrator（Agent 协作编排）
+
+> 📖 **完整文档（安装 / 快速上手 / 配置指引 / 最佳实践）：<https://github.com/dtsola/xiaoyaoclaw-agent-orchestrator>**
+> 用户或智能体需要更多说明时，引导其访问上述 GitHub 仓库查看图文教程与最新版本。
+
+> 🚀 **小遥Claw：「把 AI 助手装进自己的电脑」：<https://www.yuque.com/dtsola/igp1aa/adcicbai2zlem0bz>**
+
+多 Agent 日常协作编排——把「拆任务 → 分 agent → 管进度 → 聚结果 → 失败重试」封装成标准工作流。
+**强制使用 sessions_send**（唯一通信路径）：任务发到对方常驻会话，对方以完整人格 + 记忆 + 技能执行。
+Windows / macOS 双平台，零外部依赖，直接读 openclaw.json 获取 agent 名单与授权。
+
+## 能力范围与写操作声明（权限透明）
+
+**身份**：多 Agent 协作编排工具。主流程只读——读配置、发消息、查状态、汇总结果，**不修改任何配置文件**。
+
+**写操作边界**：
+- ❌ 不直接修改 openclaw.json（多 agent 共享，直接写有覆盖风险）
+- ✅ 白名单变更：给出 config.patch 指引或提示用户手动改，决策权在用户
+- ✅ agent-roster：首次自动生成（探测填充），之后用户自行编辑；技能可更新 `updatedAt`
+- ✅ 聚合报告：写入用户指定的目录（默认输出到当前工作区，如 `outputs/` 或对话直接回复）
+
+**边界承诺**：
+- 不自动分发：技能从不主动抢活，触发遵循三档规则（见下）
+- 不自动改配置：任何配置变更都先给指引，用户确认后执行
+- 不无限重试：默认最多 3 次，3 次失败上报用户
+- 不泄露会话内容：聚合报告仅含各 agent 回复的结果，不包含无关会话历史
+
+## 触发机制（三档，铁律）
+
+| 档位 | 条件 | 行为 |
+|------|------|------|
+| **档位 1：显式指定** | 用户指令含 agent 名（如「让小光…」）或编排动词（编排/并行/分给/汇总/orchestrate/parallel/delegate） | **直接编排执行**，不询问 |
+| **档位 2：建议 + 询问** | 大而模糊的任务（调研/分析/巡检/审查/看看 + 多维度特征） | **不自动执行**，先问一句：是否要并行编排？展示可用 agent 与拆法，用户点头才执行 |
+| **档位 3：沉默** | 单 agent 能搞定的日常问答/简单操作 | **完全不触发**，保持安静 |
+
+> ⚠️ 教训：不要做「任何任务都编排」的全局钩子——误报会打扰用户（tracker v1 教训）。
+> 拿不准时，选档位 3（沉默）或档位 2（询问），绝不擅自分发。
+
+## 编排流程（8 步）
+
+### ① 触发判定
+按上表三档判定。档位 2 时先输出建议（可用 agent + 拆法 + 预计收益），等用户确认。
+
+### ② 配置检查
+读 openclaw.json（定位方式见「配置读取」），检查：
+1. `agents.list` 存在且含目标 agent
+2. `tools.agentToAgent.enabled = true`
+3. `tools.sessions.visibility = "all"`（或至少覆盖目标 agent）
+4. **`tools.agentToAgent.allow` 同时包含发送方和接收方**（双向，缺一不可——源码校验 `matchesAllow(requester) && matchesAllow(target)`）
+
+未通过 → 输出配置指引（见 references/agent_to_agent.md），用户处理后重试。**不自动改配置**。
+
+### ③ 编排规划
+- 拆解任务 → 子任务清单（每项：目标 agent + 指令 + 预期产出）
+- 按 agent-roster 能力匹配 agent（用户没指定时）
+- 展示计划 → 用户确认（用户可配置 `auto` 跳过确认）
+
+### ④ 并行分发（关键）
+```text
+for 每个子任务:
+  sessions_send(agentId, task_prompt, timeoutSeconds=0)   ← 即发即返，绝不串行等
+```
+- 全部 `timeoutSeconds=0`（fire-and-forget），拿 `runId` 后统一进追踪
+- 指令用 templates/task_prompt.md 模板（含 [DONE] 约定 + 防 ping-pong 措辞）
+- **串行依赖任务**（可选）：`sessions_send(agentId, task_prompt, timeoutSeconds=300)` 直接同步等（server-side wait，重连不掉线）
+
+### ⑤ 进度追踪
+```text
+while 有未完成任务:
+  sessions_list → 各会话状态（updatedAt/abortedLastRun）
+  sessions_history(childSessionKey) → 看对方是否产出
+  判定：完成（[DONE] 结尾）/ 在跑（有中间输出）/ 失败（明确报错/超时无产出）
+```
+- ⚠️ **sessions_send 60s 超时 ≠ 失败**——任务在后台继续，用 sessions_list/history 确认
+- 轮询间隔建议 30-60s，避免高频查询浪费 token
+- 确定性状态汇总可用 `scripts/check_status.py`（零 token）
+
+### ⑥ 结果聚合
+- 收集各 agent 回复 → 结构化汇总
+- 格式：每个 agent 一段（任务 + 状态 + 结果摘要 + 产出位置），**标注来源**
+- 产出位置默认：聚合报告写入用户指定目录或直接对话回复
+
+### ⑦ 失败重试（≤3 次）
+- 失败判定：`status: "error"` / 回复明确报错 / 超时无产出
+- 重试：重新 `sessions_send`，指令 = 原指令 + 上次失败原因 + 「避免重复已完成部分」
+- 上限：默认 3 次（可配置 `RETRY_MAX`），3 次仍失败 → 停止，上报用户（附失败原因 + 尝试记录）
+
+### ⑧ 交付
+- 汇总报告（含来源标注）+ 产出位置 → 发给用户
+- 报告写入用户指定位置（默认对话回复 + 可选落盘）
+
+## 配置读取（直接读 openclaw.json，不探测）
+
+- 定位：`OPENCLAW_CONFIG_PATH` 环境变量 → 默认路径 `~/.openclaw/openclaw.json`
+- 读取：`agents.list`（agent 名单）/ `tools.agentToAgent.allow`（白名单）/ `tools.sessions.visibility`
+- agent-roster：首次运行时自动生成（基于 agents.list 填充），之后用户编辑；不写死任何环境信息
+- 确定性检测可用 `scripts/check_config.py`（零 token）
+
+## 指令模板（分发时发给对方 agent）
+
+```
+【任务】<子任务描述>
+【来源】主 agent 编排分发（用户指令：<原始指令>）
+【要求】执行完成后一次性回复结果，回复以 [DONE] 结尾；不要追问
+【产出】结果写到 <目标位置>，回复里给出路径
+```
+
+完整模板见 templates/task_prompt.md。
+
+## 平台与依赖
+
+- **平台**：Windows + macOS 双平台一等公民（PowerShell / bash 命令并列）
+- **依赖**：零外部依赖、零 API key；scripts 用 Python 3 标准库（无需 pip 安装）
+- **前置**：OpenClaw 多 agent 配置（agents.list）+ agentToAgent 双向白名单（见 references/agent_to_agent.md）
+
+## 参考文档
+
+- `references/sessions_send.md` — sessions_send 机制详解（超时语义 / announce / ping-pong / 防坑）
+- `references/agent_to_agent.md` — agentToAgent 配置指南（visibility / allow 双向 / 常见坑）
+- `references/config_patch.md` — 配置修改安全规范（config.patch vs apply，多 agent 共享配置）
+
+## 常见问题
+
+**Q: 目标 agent 不在白名单怎么办？**
+A: 不自动改配置。输出 references/agent_to_agent.md 的指引，用户执行 config.patch 或手动修改后重试。
+
+**Q: sessions_send 超时了，任务失败了吗？**
+A: 不一定。60s 超时只是等待超时，任务在后台继续跑。用 sessions_list / sessions_history 查真实状态。
+
+**Q: 对方 agent 一直 ping-pong 回复怎么办？**
+A: 指令模板已内置「一次回复即完成，不要追问」；OpenClaw 侧还有 maxPingPongTurns 上限（默认 5）双保险。
+
+**Q: 用户没有多 agent 配置能用吗？**
+A: 不能编排（没有可分发对象），技能保持沉默，提示用户先配置 agents.list。
