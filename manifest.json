@@ -2,7 +2,7 @@
   "name": "xiaoyaoclaw-agent-orchestrator",
   "version": "1.0.0",
   "category": "Collaboration / Orchestration",
-  "description": "OpenClaw multi-agent daily collaboration orchestrator. Splits tasks, dispatches to resident agents via sessions_send, tracks progress via sessions_list/sessions_history, aggregates results with source attribution, and retries failures (default max 3). Three-tier trigger; reads openclaw.json directly for agents.list and agentToAgent.allow; asks user before modifying config (config.patch only). Windows & macOS ready, zero-dependency. 中文：多 Agent 日常协作编排器——任务拆解、跨 agent 分发（强制 sessions_send）、进度追踪、结果聚合、失败重试（默认最多 3 次）。三档触发，直接读 openclaw.json；配置不满足时先询问用户，同意后 config.patch 修改。",
+  "description": "OpenClaw multi-agent orchestrator: split tasks, dispatch via sessions_send, track progress, aggregate results, retry (max 3). Reads openclaw.json (agents.list + bidirectional allow); three-tier trigger. Use: orchestrate/parallel/delegate/让 XX 做/编排/并行/分给/汇总. 中文：多 Agent 协作编排器——拆任务、分 agent、管进度、聚结果、失败重试 ≤3。三档触发：点名直接执行；模糊任务先问；其余沉默。读 openclaw.json 获取名单与授权。",
   "homepage": "https://github.com/dtsola/xiaoyaoclaw-agent-orchestrator",
   "compat": [
     "openclaw"
