@@ -49,21 +49,23 @@ git clone https://github.com/dtsola/xiaoyaoclaw-agent-orchestrator
 
 ## 使用
 
-### Step 1：确保多 agent 配置就绪
+### Step 1：配置自动检测（一般不用管）
 
-技能会自动检测，但你需要先有：
+技能启动时会自动检测多 agent 配置：
 1. `agents.list` 里配置了多个 agent
 2. `tools.agentToAgent.enabled = true`
 3. `tools.sessions.visibility = "all"`
 4. `tools.agentToAgent.allow` **同时包含发送方和接收方**（双向）
 
-检测命令（零依赖）：
+**配置缺失时技能会先询问你**：「要不要帮你补配置？」——你同意后自动执行 `config.patch`（只动必要字段，安全合并），改完即可编排。你不想让技能改，也可以手动配（详见 `references/agent_to_agent.md`）。
+
+手动检测命令（零依赖，可选）：
 
 ```bash
 python scripts/check_config.py
 ```
 
-输出 `[OK]` 即就绪；`[FAIL]`/`[WARN]` 会给出修复指引（详见 `references/agent_to_agent.md`）。
+输出 `[OK]` 即就绪；`[FAIL]`/`[WARN]` 会给出修复指引。
 
 ### Step 2：对 agent 说一句话
 

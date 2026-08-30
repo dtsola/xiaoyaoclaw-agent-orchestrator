@@ -50,21 +50,23 @@ git clone https://github.com/dtsola/xiaoyaoclaw-agent-orchestrator
 
 ## Usage
 
-### Step 1: Multi-agent config ready
+### Step 1: Config auto-check (usually nothing to do)
 
-The skill auto-detects, but you need:
+The skill auto-detects the multi-agent config on startup:
 1. Multiple agents in `agents.list`
 2. `tools.agentToAgent.enabled = true`
 3. `tools.sessions.visibility = "all"`
 4. `tools.agentToAgent.allow` containing **BOTH sender and receiver** (bidirectional)
 
-Check with (zero-dependency):
+**If config is missing, the skill asks first**: "Want me to fix the config?" — on your OK it runs `config.patch` (minimal fields, safe merge) and you're ready to orchestrate. Prefer manual setup? See `references/agent_to_agent.md`.
+
+Optional manual check (zero-dependency):
 
 ```bash
 python scripts/check_config.py
 ```
 
-`[OK]` means ready; `[FAIL]`/`[WARN]` prints fix guidance (see `references/agent_to_agent.md`).
+`[OK]` means ready; `[FAIL]`/`[WARN]` prints fix guidance.
 
 ### Step 2: Say one sentence
 
