@@ -129,6 +129,7 @@ xiaoyaoclaw-agent-orchestrator/
 ├── templates/
 │   ├── task_prompt.md          # 分发指令模板（[DONE] 约定 + 防 ping-pong）
 │   └── agent_roster.md         # agent 清单模板（用户可编辑）
+├── assets/readme/              # hero + 群二维码
 ├── docs/
 │   └── DESIGN.md               # 设计文档（含竞品分析）
 ├── README.md / README.en.md
@@ -155,6 +156,16 @@ MIT — 随便用，署名可选。
 
 - 微信：`dtsola`（添加好友时备注：**openclaw定制**）
 - 服务范围：OpenClaw 多 agent 部署 / 工作区规范化 / 自定义 Skill 开发 / agent 记忆系统搭建 / 多 agent 协作编排
+
+## 💬 加入交流群
+
+小遥全系产品用户交流群——产品反馈 · 使用交流 · 功能建议：
+
+<p align="center">
+  <img src="./assets/readme/community-qr.png" width="280" alt="小遥AI 用户交流群二维码：扫码加群，或添加微信 dtsola（备注：加群）">
+</p>
+
+<p align="center">扫码加群，或添加微信 <code>dtsola</code>（备注：<b>加群</b>）</p>
 
 ## 姊妹项目（七件套）
 

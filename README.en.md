@@ -110,6 +110,7 @@ xiaoyaoclaw-agent-orchestrator/
 ├── templates/
 │   ├── task_prompt.md          # dispatch prompt template ([DONE] convention + anti-ping-pong)
 │   └── agent_roster.md         # agent roster template (user-editable)
+├── assets/readme/              # hero + community QR
 ├── docs/
 │   └── DESIGN.md               # design doc (with competitor analysis)
 ├── README.md / README.en.md
@@ -136,6 +137,16 @@ MIT — free to use, attribution optional.
 
 - WeChat: `dtsola` (note: **openclaw定制**)
 - Services: OpenClaw multi-agent deployment / workspace standardization / custom Skill development / agent memory systems / multi-agent orchestration
+
+## 💬 Join the community
+
+Xiaoyao product family user group — feedback · exchange · suggestions:
+
+<p align="center">
+  <img src="./assets/readme/community-qr.png" width="280" alt="XiaoyaoAI user group QR: scan to join, or add WeChat dtsola (note: 加群)">
+</p>
+
+<p align="center">Scan to join, or add WeChat <code>dtsola</code> (note: <b>加群</b>)</p>
 
 ## Sister Projects (Seven-Piece Suite)
 
