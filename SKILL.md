@@ -1,12 +1,21 @@
 ---
 name: xiaoyaoclaw-agent-orchestrator
 description: >
-  OpenClaw multi-agent orchestrator: split tasks, dispatch via sessions_send,
-  track progress, aggregate results, retry (max 3). Reads openclaw.json
-  (agents.list + bidirectional allow); three-tier trigger. Use:
-  orchestrate/parallel/delegate/让 XX 做/编排/并行/分给/汇总. 中文：多 Agent
-  协作编排器——拆任务、分 agent、管进度、聚结果、失败重试 ≤3。三档触发：
-  点名直接执行；模糊任务先问；其余沉默。读 openclaw.json 获取名单与授权。
+  OpenClaw multi-agent daily collaboration orchestrator: split a task into
+  subtasks, dispatch to resident agents via sessions_send, track progress via
+  sessions_list/sessions_history, aggregate results with source attribution,
+  and retry failures (default max 3). Reads openclaw.json for agents.list and
+  agentToAgent.allow (bidirectional whitelist);
+  three-tier trigger (explicit dispatch / suggest+ask for fuzzy big tasks /
+  silent otherwise). Use when user asks to orchestrate/coordinate multiple
+  agents, dispatch parallel work, delegate to a named agent, or aggregate
+  results from several agents (orchestrate/parallel/delegate/让 XX 做/编排/并行/
+  分给/汇总). 中文：OpenClaw 多 Agent 日常协作编排器——任务拆解、跨 agent
+  分发（强制 sessions_send）、进度追踪、结果聚合、失败重试（默认最多 3 次）。
+  三档触发：用户点名或含编排动词直接执行；模糊大任务建议并行并询问用户；
+  其余情况保持沉默。直接读 openclaw.json（agents.list + agentToAgent.allow
+  双向白名单）获取 agent 名单与授权。适用于多 agent
+  家庭协作、并行调研、批量巡检、发布前多视角审查、团队日报汇总等场景。
 ---
 
 # OpenClaw Agent Orchestrator（Agent 协作编排）
