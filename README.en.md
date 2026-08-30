@@ -85,6 +85,17 @@ The skill asks: parallel orchestration? Shows available agents and the split —
 ✅ 3/3 done → sourced report → delivered
 ```
 
+### Daily habits
+
+| Scenario | How |
+|---|---|
+| Named dispatch | "Ask xiaoguang to draw, xiaozhi to research, then summarize into a report" |
+| Fuzzy big task | "Research XX" — the skill asks whether to orchestrate in parallel first |
+| Parallel batch audit | "Ask all agents to check their own workspaces" |
+| Pre-release multi-perspective review | "Have agent X review this page from a user's perspective" |
+| Team daily report | "Summarize what each agent did today" |
+| Failure retry | auto ≤3 retries with context, no manual intervention needed |
+
 ## FAQ
 
 | Question | Answer |
