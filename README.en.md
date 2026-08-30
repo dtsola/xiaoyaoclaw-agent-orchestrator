@@ -35,7 +35,6 @@ This skill solves it in one go: **one sentence → auto dispatch → transparent
 - 📊 **Sourced aggregation**: report labels which conclusion came from which agent
 - 🔁 **Auto retry**: default max 3 (configurable), retry carries context (skips completed parts); reports to user after 3 failures
 - 📖 **Reads openclaw.json directly**: agents.list + agentToAgent.allow — one source of truth, no probing
-- 🧑‍💻 **User-editable agent-roster**: auto-generated on first run, edit capability tags freely — no hardcoded environment info
 - 🐍 **Zero-dependency scripts**: config check + status summary, pure Python stdlib, Windows / macOS
 
 ## Install
@@ -119,8 +118,7 @@ xiaoyaoclaw-agent-orchestrator/
 │   ├── check_config.py         # [Highlight] check openclaw.json collaboration config → report
 │   └── check_status.py         # [Highlight] parse sessions_list → subtask status summary (zero-token)
 ├── templates/
-│   ├── task_prompt.md          # dispatch prompt template ([DONE] convention + anti-ping-pong)
-│   └── agent_roster.md         # agent roster template (user-editable)
+│   └── task_prompt.md          # dispatch prompt template ([DONE] convention + anti-ping-pong)
 ├── assets/readme/              # hero + community QR
 ├── docs/
 │   └── DESIGN.md               # design doc (with competitor analysis)

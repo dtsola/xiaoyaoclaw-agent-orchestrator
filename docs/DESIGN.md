@@ -47,8 +47,8 @@ Anthropic 官方 19 技能亦零协作类。空白带真实存在。
 |---|------|------|
 | D1 | **强制 sessions_send**（唯一通信路径） | 一劳永逸：对方常驻会话 = 完整人格+记忆+技能；砍 spawn 降级分支，设计简化 |
 | D2 | 触发三档：显式直接执行 / 模糊大任务建议+询问 / 默认沉默 | 吸收 tracker v1 全局钩子教训（2026-08-25 下架），技能从不主动抢活 |
-| D3 | **直接读 openclaw.json**（agents.list + agentToAgent.allow） | 真相源只有一个，不搞探测中间层；白名单变更走 config.patch 或提示用户，不直接写文件（多 agent 共享配置） |
-| D4 | Agent 清单 = 用户可配置 agent-roster（首次自动生成） | 技能要给别人用，不写死任何环境信息 |
+| D3 | **直接读 openclaw.json**（agents.list + agentToAgent.allow） | 真相源只有一个，不搞探测中间层；配置不满足时先询问用户，同意后 config.patch（多 agent 共享配置，禁 apply） |
+| D4 | Agent 名单 = 直接读 agents.list（砍 agent-roster） | 技能要给别人用，不写死任何环境信息；roster 冗余（名单已在 openclaw.json，能力标签无人维护） |
 | D5 | 重试默认最多 3 次（可配置 RETRY_MAX） | 指挥官拍板：默认 3，3 次失败上报 |
 | D6 | 进度追踪用 OpenClaw 已有机制 | 同步等待 = sessions_send server-side wait（零实现）；并行 = fire-and-forget + sessions_list/history 查询；不造监听引擎，不用 hooks（网关层，无法驱动会话内逻辑） |
 
@@ -56,7 +56,7 @@ Anthropic 官方 19 技能亦零协作类。空白带真实存在。
 
 ```
 ① 触发判定    三档：点名/编排动词→直接进；模糊大任务→问一句→确认进；其他→单 agent
-② 配置检查    读 openclaw.json：agents.list + allow 双向白名单；未通过→给指引，用户处理后重试
+② 配置检查    读 openclaw.json：agents.list + allow 双向白名单；未通过→询问用户→同意后 config.patch 补齐（禁 apply），或给指引用户手动改后重试
 ③ 编排规划    拆子任务（目标 agent + 指令 + 预期产出）→ 展示计划 → 用户确认（可配置 auto 跳过）
 ④ 并行分发    for 每个子任务: sessions_send(agent, task, timeoutSeconds=0)  ← 即发即返
 ⑤ 进度追踪    while 未完成: sessions_list/history 查状态 → 判定 完成/在跑/失败
@@ -103,8 +103,7 @@ xiaoyaoclaw-agent-orchestrator/
 │   ├── agent_to_agent.md     # agentToAgent 配置指南（visibility/allow 双向/坑）
 │   └── config_patch.md       # 配置修改安全规范（config.patch vs apply，多 agent 共享配置）
 └── templates/
-    ├── task_prompt.md        # 分发指令模板（[DONE] 结尾约定 + 防 ping-pong 措辞）
-    └── agent_roster.md       # agent 清单模板（用户可编辑，首次自动生成）
+    └── task_prompt.md        # 分发指令模板（[DONE] 结尾约定 + 防 ping-pong 措辞）
 ```
 
 ## 9. 开发计划

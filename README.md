@@ -34,7 +34,6 @@
 - 📊 **带来源汇总**：聚合报告标注「哪条结论来自哪个 agent」，可追溯
 - 🔁 **失败重试**：默认最多 3 次（可配置），重试带上下文（不重复已完成部分）；3 次仍败上报用户
 - 📖 **直接读 openclaw.json**：agents.list + agentToAgent.allow 双向白名单，真相源只有一个，不搞探测
-- 🧑‍💻 **agent-roster 可配置**：首次自动生成，用户随意编辑能力标签——不写死任何环境信息
 - 🐍 **零依赖脚本**：配置检测 + 状态汇总，纯 Python 标准库，Windows / macOS 双平台
 
 ## 安装
@@ -93,10 +92,9 @@ clawhub install xiaoyaoclaw-agent-orchestrator
 python scripts/check_config.py    # 确认 [OK]
 ```
 
-### Step 2：生成 agent-roster（可选）
+### Step 2：确认可用 agent
 
-首次编排时技能会自动生成 `agent-roster.md`（基于 openclaw.json 探测填充），
-编辑它给每个 agent 标注能力（如「小光：绘图/可视化」），之后说「找个会画图的」也能匹配。
+技能直接读 `agents.list` 展示可用 agent（如：小光 / 小智 / 天桐），分工时按名字指定即可。
 
 ### Step 3：一句话编排
 
@@ -138,8 +136,7 @@ xiaoyaoclaw-agent-orchestrator/
 │   ├── check_config.py         # 【亮点】检测 openclaw.json 协作配置 → 状态报告
 │   └── check_status.py         # 【亮点】解析 sessions_list → 子任务状态汇总（零 token）
 ├── templates/
-│   ├── task_prompt.md          # 分发指令模板（[DONE] 约定 + 防 ping-pong）
-│   └── agent_roster.md         # agent 清单模板（用户可编辑）
+│   └── task_prompt.md          # 分发指令模板（[DONE] 约定 + 防 ping-pong）
 ├── assets/readme/              # hero + 群二维码
 ├── docs/
 │   └── DESIGN.md               # 设计文档（含竞品分析）

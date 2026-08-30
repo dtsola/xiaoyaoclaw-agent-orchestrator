@@ -19,8 +19,8 @@
 ### 核心决策
 1. **通信路径**：强制 sessions_send（唯一路径，一劳永逸）——对方常驻会话，完整人格+记忆+技能；spawn 降级分支已砍
 2. **触发机制**：三档——显式指定直接执行 / 模糊大任务建议+询问 / 默认沉默（吸收 tracker 全局钩子教训）
-3. **配置读取**：直接读 openclaw.json（agents.list + agentToAgent.allow），不搞探测；白名单变更走 config.patch 或提示用户，不直接写文件
-4. **Agent 清单**：用户可配置 agent-roster（首次自动生成，用户可编辑），不写死
+3. **配置读取**：直接读 openclaw.json（agents.list + agentToAgent.allow），不搞探测；配置不满足时**先询问用户，同意后 config.patch**（多 agent 共享配置，禁 apply）
+4. **Agent 名单**：直接读 agents.list（**2026-08-30 砍掉 agent-roster**——名单已在 openclaw.json，能力标签无人维护即冗余），不写死任何环境信息
 5. **重试**：默认最多 3 次，可配置；3 次失败上报用户
 6. **进度追踪**：主 agent 维护，用 OpenClaw 已有机制——同步等待（server-side wait）串行依赖任务；fire-and-forget + sessions_list/history 并行任务；不造监听引擎，不用 hooks
 
@@ -41,7 +41,7 @@ xiaoyaoclaw-agent-orchestrator/
 ├── docs/DESIGN.md
 ├── scripts/check_config.py + check_status.py
 ├── references/sessions_send.md + agent_to_agent.md + config_patch.md
-└── templates/task_prompt.md + agent_roster.md
+└── templates/task_prompt.md（agent_roster.md 已移除）
 ```
 
 ## 开发计划

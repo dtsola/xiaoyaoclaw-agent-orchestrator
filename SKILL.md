@@ -5,7 +5,7 @@ description: >
   subtasks, dispatch to resident agents via sessions_send, track progress via
   sessions_list/sessions_history, aggregate results with source attribution,
   and retry failures (default max 3). Reads openclaw.json for agents.list and
-  agentToAgent.allow (bidirectional whitelist); user-editable agent-roster;
+  agentToAgent.allow (bidirectional whitelist);
   three-tier trigger (explicit dispatch / suggest+ask for fuzzy big tasks /
   silent otherwise). Use when user asks to orchestrate/coordinate multiple
   agents, dispatch parallel work, delegate to a named agent, or aggregate
@@ -14,7 +14,7 @@ description: >
   分发（强制 sessions_send）、进度追踪、结果聚合、失败重试（默认最多 3 次）。
   三档触发：用户点名或含编排动词直接执行；模糊大任务建议并行并询问用户；
   其余情况保持沉默。直接读 openclaw.json（agents.list + agentToAgent.allow
-  双向白名单）获取 agent 名单与授权，agent-roster 用户可编辑。适用于多 agent
+  双向白名单）获取 agent 名单与授权。适用于多 agent
   家庭协作、并行调研、批量巡检、发布前多视角审查、团队日报汇总等场景。
 ---
 
@@ -31,17 +31,15 @@ Windows / macOS 双平台，零外部依赖，直接读 openclaw.json 获取 age
 
 ## 能力范围与写操作声明（权限透明）
 
-**身份**：多 Agent 协作编排工具。主流程只读——读配置、发消息、查状态、汇总结果，**不修改任何配置文件**。
+**身份**：多 Agent 协作编排工具。主流程只读——读配置、发消息、查状态、汇总结果；**配置不满足时先询问用户，用户同意后才修改**（多 agent 协作的前提是配置就绪，修改配置是编排的前置步骤）。
 
 **写操作边界**：
-- ❌ 不直接修改 openclaw.json（多 agent 共享，直接写有覆盖风险）
-- ✅ 白名单变更：给出 config.patch 指引或提示用户手动改，决策权在用户
-- ✅ agent-roster：首次自动生成（探测填充），之后用户自行编辑；技能可更新 `updatedAt`
+- ✅ openclaw.json 配置不满足（缺 agents.list / agentToAgent 未开 / allow 非双向）：**先询问用户**，用户同意后执行 config.patch（部分合并，禁 config.apply），或给出指引让用户手动改——决策权在用户
 - ✅ 聚合报告：写入用户指定的目录（默认输出到当前工作区，如 `outputs/` 或对话直接回复）
 
 **边界承诺**：
 - 不自动分发：技能从不主动抢活，触发遵循三档规则（见下）
-- 不自动改配置：任何配置变更都先给指引，用户确认后执行
+- 不擅自改配置：任何配置变更都先询问用户，用户确认后才执行（config.patch，禁 apply）
 - 不无限重试：默认最多 3 次，3 次失败上报用户
 - 不泄露会话内容：聚合报告仅含各 agent 回复的结果，不包含无关会话历史
 
@@ -68,11 +66,11 @@ Windows / macOS 双平台，零外部依赖，直接读 openclaw.json 获取 age
 3. `tools.sessions.visibility = "all"`（或至少覆盖目标 agent）
 4. **`tools.agentToAgent.allow` 同时包含发送方和接收方**（双向，缺一不可——源码校验 `matchesAllow(requester) && matchesAllow(target)`）
 
-未通过 → 输出配置指引（见 references/agent_to_agent.md），用户处理后重试。**不自动改配置**。
+未通过 → **先询问用户**，用户同意后执行 config.patch 补齐配置（部分合并，禁 apply），或输出指引（见 references/agent_to_agent.md）让用户手动改后重试。
 
 ### ③ 编排规划
 - 拆解任务 → 子任务清单（每项：目标 agent + 指令 + 预期产出）
-- 按 agent-roster 能力匹配 agent（用户没指定时）
+- 按 agents.list 展示可用 agent（用户没指定时），由用户确认分工
 - 展示计划 → 用户确认（用户可配置 `auto` 跳过确认）
 
 ### ④ 并行分发（关键）
@@ -113,7 +111,6 @@ while 有未完成任务:
 
 - 定位：`OPENCLAW_CONFIG_PATH` 环境变量 → 默认路径 `~/.openclaw/openclaw.json`
 - 读取：`agents.list`（agent 名单）/ `tools.agentToAgent.allow`（白名单）/ `tools.sessions.visibility`
-- agent-roster：首次运行时自动生成（基于 agents.list 填充），之后用户编辑；不写死任何环境信息
 - 确定性检测可用 `scripts/check_config.py`（零 token）
 
 ## 指令模板（分发时发给对方 agent）
@@ -142,7 +139,7 @@ while 有未完成任务:
 ## 常见问题
 
 **Q: 目标 agent 不在白名单怎么办？**
-A: 不自动改配置。输出 references/agent_to_agent.md 的指引，用户执行 config.patch 或手动修改后重试。
+A: 不擅自改配置。先询问用户，用户同意后执行 config.patch 补 allow 白名单（需同时包含发送方和接收方），或按 references/agent_to_agent.md 指引手动修改后重试。
 
 **Q: sessions_send 超时了，任务失败了吗？**
 A: 不一定。60s 超时只是等待超时，任务在后台继续跑。用 sessions_list / sessions_history 查真实状态。
