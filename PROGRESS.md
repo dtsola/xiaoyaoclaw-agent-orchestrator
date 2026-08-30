@@ -52,7 +52,7 @@ xiaoyaoclaw-agent-orchestrator/
 - [ ] M4: scripts（check_config.py / check_status.py）✅ 本地实测通过
 - [ ] M5: 本地实测（真实多 agent 编排测试）✅ 全链路通过（send→执行→[DONE] 回复）
 - [ ] M6: README + README.en + assets ✅ hero.svg 渲染验证通过
-- [ ] M7: GitHub 发布 + 全局技能同步
+- [ ] M7: GitHub 发布 + 全局技能同步 ✅（repo 1e402e4，topics×8，哈希 MATCH，六项目 README 互链推送）
 - [ ] M8: ClawHub 提交（确认制，等指挥官点头）
 
 ## 竞品结论（2026-08-30 调研）
