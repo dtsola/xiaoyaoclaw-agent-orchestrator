@@ -16,10 +16,6 @@ description: >
   其余情况保持沉默。直接读 openclaw.json（agents.list + agentToAgent.allow
   双向白名单）获取 agent 名单与授权，agent-roster 用户可编辑。适用于多 agent
   家庭协作、并行调研、批量巡检、发布前多视角审查、团队日报汇总等场景。
-  与 xiaoyaoclaw-workspace-initializer（目录规范）、xiaoyaoclaw-memory-distill
-  （记忆蒸馏）、xiaoyaoclaw-task-progress-tracker（任务进度）、
-  xiaoyaoclaw-kb-retriever（知识检索）、xiaoyaoclaw-workspace-auditor（工作区体检）、
-  xiaoyaoclaw-web-clipper（网页剪藏）组成七件套；本技能为「协作层」，架于六件套之上。
 ---
 
 # OpenClaw Agent Orchestrator（Agent 协作编排）
