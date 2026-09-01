@@ -159,7 +159,7 @@ Xiaoyao product family user group — feedback · exchange · suggestions:
 
 <p align="center">Scan to join, or add WeChat <code>dtsola</code> (note: <b>加群</b>)</p>
 
-## Sister Projects (Eight-Piece Suite)
+## Sister Projects (Nine-Piece Suite)
 
 - 🏠 **xiaoyaoclaw-workspace-initializer**: give every agent a "home" — standard directory structure + WORKSPACE.md + multi-agent config safety.<https://github.com/dtsola/xiaoyaoclaw-workspace-initializer>
 - 🧠 **xiaoyaoclaw-memory-distill**: distill conversations into MEMORY.md + daily logs.<https://github.com/dtsola/xiaoyaoclaw-memory-distill>
@@ -167,5 +167,6 @@ Xiaoyao product family user group — feedback · exchange · suggestions:
 - 📚 **xiaoyaoclaw-kb-retriever**: local knowledge-base retrieval, zero-dependency, zero API key.<https://github.com/dtsola/xiaoyaoclaw-kb-retriever>
 - 🩹 **xiaoyaoclaw-workspace-auditor**: read-only workspace health audit — 5 check categories + graded report.<https://github.com/dtsola/xiaoyaoclaw-workspace-auditor>
 - 📎 **xiaoyaoclaw-web-clipper**: any web page → frontmatter Markdown, dual-engine extraction, knowledge-base closed loop.<https://github.com/dtsola/xiaoyaoclaw-web-clipper>
-- 🤝 **xiaoyaoclaw-agent-orchestrator** (collaboration layer): on top of the seven — split, dispatch, track, aggregate, retry.<https://github.com/dtsola/xiaoyaoclaw-agent-orchestrator>
+- 🤝 **xiaoyaoclaw-agent-orchestrator** (collaboration layer): on top of the ecosystem — split, dispatch, track, aggregate, retry.<https://github.com/dtsola/xiaoyaoclaw-agent-orchestrator>
 - 📊 **xiaoyaoclaw-usage-report**: parse session JSONL to answer how long each task took, which tools/skills/models were used, and how many tokens were consumed — zero dependency, local only, token is the primary metric. <https://github.com/dtsola/xiaoyaoclaw-usage-report>
+- 🎛️ **xiaoyaoclaw-commander** (cross-tool commander, **command layer**): command your XiaoyaoClaw/OpenClaw multi-agent system from any Agent Skills tool (Claude Code / Codex / OpenCode / Trae / DSH). <https://github.com/dtsola/xiaoyaoclaw-commander>
