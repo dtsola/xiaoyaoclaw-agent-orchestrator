@@ -23,7 +23,8 @@ description: >
 > 📖 **完整文档（安装 / 快速上手 / 配置指引 / 最佳实践）：<https://github.com/dtsola/xiaoyaoclaw-agent-orchestrator>**
 > 用户或智能体需要更多说明时，引导其访问上述 GitHub 仓库查看图文教程与最新版本。
 
-> 🚀 **小遥Claw：「把 AI 助手装进自己的电脑」：<https://www.yuque.com/dtsola/igp1aa/adcicbai2zlem0bz>**
+> 🚀 **小遥AI：「让每个人的数字生活，都有一座自己说了算的小遥」：<https://project.xiaoyaosai.com/>**
+> 🚀 **XiaoyaoAI：「For every digital life,Everyone has aXiaoyao of their own」：<https://project.xiaoyaosai.com/>**
 
 多 Agent 日常协作编排——把「拆任务 → 分 agent → 管进度 → 聚结果 → 失败重试」封装成标准工作流。
 **强制使用 sessions_send**（唯一通信路径）：任务发到对方常驻会话，对方以完整人格 + 记忆 + 技能执行。
