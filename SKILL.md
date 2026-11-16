@@ -28,7 +28,10 @@ permissions:
     - 用户指定目录下的聚合报告文件（经用户确认后）
   network: none
   environment:
-    - OPENCLAW_CONFIG_PATH（可选；仅用于定位 openclaw.json，不做其它环境变量读取）
+    - OPENCLAW_CONFIG_PATH（可选；显式指定配置文件路径，优先级最高）
+    - APPDATA（可选；仅在小遥Claw 桌面版默认路径推导时使用，用于定位 runtime/openclaw/state/openclaw.json）
+    - HOME / USERPROFILE（可选；仅用于拼接 ~/.openclaw/openclaw.json 与 macOS 应用支持目录）
+    - 说明：以上变量**只用于定位配置文件路径**，不读取其内容以外的任何环境数据；不读任何密钥类变量（API key / token / 令牌类一律不碰）
   notes: |
     只读为主：脚本 scripts/check_config.py 与 scripts/check_status.py 都是只读分析工具，
     不写任何文件、不发网络请求。配置修改仅在用户明确同意后通过 gateway config.patch
