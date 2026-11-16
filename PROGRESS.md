@@ -1,10 +1,27 @@
+---
+type: project
+status: archived
+progress: 100
+created: 2026-08-30
+updated: 2026-09-01
+docs:
+  - path: SKILL.md
+    desc: 技能定义（七件套协作层）
+  - path: README.md / README.en.md
+    desc: 中英双语文档
+  - path: docs/DESIGN.md
+    desc: 设计文档（含竞品分析）
+  - path: manifest.json
+    desc: ClawHub 发布清单
+---
+
 # xiaoyaoclaw-agent-orchestrator
 
 > 七件套「协作层」——OpenClaw 多 Agent 日常协作编排
 
 ## 状态
 
-**status: active**（2026-08-30 立项，设计定稿，待开发）
+**status: archived（已发布，进入维护期）**——2026-08-30 立项并设计定稿 → 2026-08-30 开发与本地实测通过、GitHub 发布 → 2026-09-01 ClawHub v1.0.1 公开（显示名 OpenClaw Cross-Tool Commander 同批收官），九件套互链闭环完成
 
 ## 项目定位
 
@@ -53,7 +70,7 @@ xiaoyaoclaw-agent-orchestrator/
 - [ ] M5: 本地实测（真实多 agent 编排测试）✅ 全链路通过（send→执行→[DONE] 回复）
 - [ ] M6: README + README.en + assets ✅ hero.svg 渲染验证通过
 - [ ] M7: GitHub 发布 + 全局技能同步 ✅（repo 1e402e4，topics×8，哈希 MATCH，六项目 README 互链推送）
-- [ ] M8: ClawHub 提交（确认制，等指挥官点头）
+- [x] M8: ClawHub 提交 ✅ v1.0.1 已公开（2026-09-01 收官）
 
 ## 竞品结论（2026-08-30 调研）
 
