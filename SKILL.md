@@ -16,6 +16,23 @@ description: >
   其余情况保持沉默。直接读 openclaw.json（agents.list + agentToAgent.allow
   双向白名单）获取 agent 名单与授权。适用于多 agent
   家庭协作、并行调研、批量巡检、发布前多视角审查、团队日报汇总等场景。
+allowed-tools:
+  - Read
+  - Bash
+  - Env
+permissions:
+  read:
+    - openclaw.json：只取 agents.list 的 id、tools.agentToAgent.enabled / allow、tools.sessions.visibility（不读密钥、渠道、模型凭据等其它配置段）
+    - sessions_list / sessions_history 的输出（会话元数据与消息文本，用于进度判定与结果聚合）
+  write:
+    - 用户指定目录下的聚合报告文件（经用户确认后）
+  network: none
+  environment:
+    - OPENCLAW_CONFIG_PATH（可选；仅用于定位 openclaw.json，不做其它环境变量读取）
+  notes: |
+    只读为主：脚本 scripts/check_config.py 与 scripts/check_status.py 都是只读分析工具，
+    不写任何文件、不发网络请求。配置修改仅在用户明确同意后通过 gateway config.patch
+    （部分合并）执行，任何情况下都不用 config.apply；本技能不建 cron、不写常驻状态文件。
 ---
 
 # OpenClaw Agent Orchestrator（Agent 协作编排）
@@ -93,6 +110,8 @@ while 有未完成任务:
 - ⚠️ **sessions_send 60s 超时 ≠ 失败**——任务在后台继续，用 sessions_list/history 确认
 - 轮询间隔建议 30-60s，避免高频查询浪费 token
 - 确定性状态汇总可用 `scripts/check_status.py`（零 token）
+  - 只统计**本次派发运行**：最后一条 user（派发提示）之后的 **assistant** 消息；user / toolResult / system 一律不参与判定
+  - `[DONE]` / `[FAILED]` 必须**独占最后一行**（正文里提到不算）；结构化 `status` 字段优先
 
 ### ⑥ 结果聚合
 - 收集各 agent 回复 → 结构化汇总
@@ -113,6 +132,8 @@ while 有未完成任务:
 - 直接读当前运行时加载的 `openclaw.json`（OpenClaw 启动时默认加载，无需指定路径；找不到时再询问用户）
 - 读取：`agents.list`（agent 名单）/ `tools.agentToAgent.allow`（白名单）/ `tools.sessions.visibility`
 - 确定性检测可用 `scripts/check_config.py`（零 token，自动定位，也支持 `--config PATH`）
+  - 双向授权按**实际匹配**校验：传 `--sender` / `--receiver`，逐个核对是否命中 `allow`（支持 `*` 通配）；
+    未指定两端时输出 `UNVERIFIED`（不冒充 OK）；`allow` 类型错误/含非字符串 → `FAIL`；重复条目 → `WARN`
 
 ## 指令模板（分发时发给对方 agent）
 
