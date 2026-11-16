@@ -78,3 +78,21 @@ xiaoyaoclaw-agent-orchestrator/
 - 框架级：metaswarm/orchestrator-supaconductor（Claude Code 编码编排）
 - **空白带：OpenClaw 日常协作编排（任务分发/汇总/进度/重试）零竞品**
 - Anthropic 官方 19 技能零协作类
+
+## 2026-11-16 v1.0.6 → v1.0.7：ClawScan 新引擎下的安全整改（两个真实缺陷 + 权限声明）
+
+- **触发**：banner 换版后重发，ClawScan v2.4.27 判 v1.0.5 `suspicious`（skillspector 25 / 3 项）
+- **修复 1｜双向授权检查形同虚设**（`scripts/check_config.py`，SDI-4）
+  - 原实现：`len(allow) >= 2` 即判 **OK** —— 只要白名单里有两条**互不相关**的 agent，也报"双向已授权"
+  - 改为按**实际匹配语义**校验：新增 `--sender` / `--receiver`，逐个核对是否命中 `allow`（精确匹配 + `*` 通配）
+  - 类型校验（非 list / 含非字符串 → FAIL）；**未指定两端 → `UNVERIFIED`**（不再冒充 OK）；重复条目 → WARN
+  - 测试 8/8：未指定两端 / 反向命中 / 接收方缺失 / 两条都无关 / 通配 / 重复 / 类型错误 / 非字符串
+- **修复 2｜状态判定会误报完成**（`scripts/check_status.py`，SDI-4）
+  - 原实现：取**任意角色**的最后一条文本，且标记用 `in` 做**子串匹配** → 用户消息、工具结果、或正文里提到 `[DONE]` 都会被判完成；上一轮历史的 `[DONE]` 也会被当成本次结论
+  - 改为：①只认**本次派发运行**（最后一条 user 之后的 **assistant** 消息，user/toolResult/system 不参与）；②`[DONE]`/`[FAILED]` 必须**独占最后一行**；③结构化 `status` 优先；④无消息 → IDLE（原来会给 RUNNING）
+  - 测试 8/8：含"user 里的 [DONE] 不算""正文提及非末行不算""历史 [DONE] 不算""toolResult 不算"等回归
+- **修复 3｜补工具作用域声明**（LP3）：SKILL.md 新增 `allowed-tools` + `permissions`（读范围 / 写范围 / 网络 none / 环境变量）
+- **修复 4（v1.0.7）｜声明对齐代码**：首版声明只写 `OPENCLAW_CONFIG_PATH`，但脚本还会读 `APPDATA` 与 `~`（HOME/USERPROFILE）推导默认路径 → 被判 **description-behavior mismatch（TP4 HIGH）**，分数反升到 44
+  - 改为如实列全：`OPENCLAW_CONFIG_PATH`（显式）+ `APPDATA`（桌面版默认路径）+ `HOME`/`USERPROFILE`（`~/.openclaw` 与 macOS 应用支持目录），并注明**仅用于定位配置文件**
+- **结果**：**v1.0.7 `security.status = clean`**，skillspector `issueCount=0`、LLM `clean`；`skill verify` 仅剩 `card.missing`（平台侧）
+- **教训**：①**"计数式"校验是假校验** —— 授权要按真实语义逐项核对，无法核对时输出 UNVERIFIED 而不是 OK；②**状态判定必须锚定本次运行**，跨轮历史与旁路消息都会污染结论；③**声明权限宁可写全**：写窄了不是"更安全"，而是被抓成言行不一致
